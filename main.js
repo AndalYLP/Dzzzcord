@@ -64,7 +64,7 @@ wss.on('connection', (ws) => {
                 }
             } else if (message.op == 0) {
                 clearTimeout(timeoutTimer)
-                message.send('{"op": 0, "received": true}')
+                ws.send('{"op": 0, "received": true}')
                 timeoutTimer = setTimeout(() => {
                     if (ws.readyState === WebSocket.OPEN) {
                         console.log('Cerrando conexión por inactividad')
