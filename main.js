@@ -1,7 +1,17 @@
 const WebSocket = require("ws");
 const https = require('https');
 
-const server = https.createServer(serverOptions);
+const server = https.createServer((req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.end(`
+    <html>
+      <head>
+        <title>Hostia chavales</title>
+      </head>
+      <body style="margin: 0; padding: 0;">
+      </body>
+    </html>`);
+});
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
