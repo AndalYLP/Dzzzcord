@@ -16,6 +16,7 @@ const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
+console.log(TIMEOUT_INTERVAL)
 let heartbeatTimer
 let timeoutTimer
 
@@ -26,7 +27,13 @@ wss.on('connection', (ws) => {
     let Username
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
-    timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
+    timeoutTimer = setTimeout(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            console.log('Cerrando conexión por inactividad')
+            ws.close()
+            Usernames.filter(item => item !== Username)
+        }
+    }, TIMEOUT_INTERVAL);
 
     ws.on('message', (message) => {
         if (isJSON(message)) {
@@ -57,7 +64,14 @@ wss.on('connection', (ws) => {
                 }
             } else if (message.op == 0) {
                 clearTimeout(timeoutTimer)
-                timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
+                message.send('{"op": 0, "received": true}')
+                timeoutTimer = setTimeout(() => {
+                    if (ws.readyState === WebSocket.OPEN) {
+                        console.log('Cerrando conexión por inactividad')
+                        ws.close()
+                        Usernames.filter(item => item !== Username)
+                    }
+                }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
                 ws.send(`{ "op": 3, "list": ${JSON.stringify(Usernames)} }`)
             }
@@ -78,14 +92,6 @@ server.listen(8081, () => {
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send('{ "op": 0 }');
-    }
-}
-
-function TimeoutHandle(ws, Username) {
-    if (ws.readyState === WebSocket.OPEN) {
-        console.log('Cerrando conexión por inactividad')
-        ws.close()
-        Usernames.filter(item => item !== Username)
     }
 }
 
