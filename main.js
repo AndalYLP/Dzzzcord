@@ -35,6 +35,16 @@ wss.on('connection', (ws) => {
         }
     }, TIMEOUT_INTERVAL);
 
+    ws.on("close", () => {
+        Usernames.filter(item => item !== Username)
+        clearInterval(heartbeatTimer);
+        clearTimeout(timeoutTimer);
+    })
+
+    ws.onerror = (error) => {
+        console.error('Error en la conexión WebSocket:', error);
+    };
+
     ws.on('message', (message) => {
         if (isJSON(message)) {
             message = JSON.parse(message)
@@ -68,6 +78,7 @@ wss.on('connection', (ws) => {
                 timeoutTimer = setTimeout(() => {
                     if (ws.readyState === WebSocket.OPEN) {
                         console.log('Cerrando conexión por inactividad')
+                        ws.send('{"op": -1, "Desconectando..."}')
                         ws.close()
                         Usernames.filter(item => item !== Username)
                     }
