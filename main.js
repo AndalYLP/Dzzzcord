@@ -59,7 +59,7 @@ wss.on('connection', (ws) => {
                 clearTimeout(timeoutTimer)
                 timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(`{ "op": 3, "list": ${Usernames} }`)
+                ws.send(`{ "op": 3, "list": ${JSON.stringify(Usernames)} }`)
             }
         } else {
             ws.send('{ "error": "Invalid op" }')
