@@ -26,7 +26,7 @@ wss.on('connection', (ws) => {
     let Username
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
-    timeoutTimer = setTimeout(() => TimeoutHandle(ws), TIMEOUT_INTERVAL);
+    timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
 
     ws.on('message', (message) => {
         if (isJSON(message)) {
@@ -57,7 +57,7 @@ wss.on('connection', (ws) => {
                 }
             } else if (message.op == 0) {
                 clearTimeout(timeoutTimer)
-                timeoutTimer = setTimeout(() => TimeoutHandle(ws), TIMEOUT_INTERVAL);
+                timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
             }
         } else {
             ws.send('{ "error": "Invalid op" }')
@@ -70,19 +70,20 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(8081, () => {
-    console.log('Servidor HTTPS escuchando en el puerto 443');
+    console.log('Servidor HTTPS escuchando en el puerto 8081');
 });
-
+"sas".split(" ")
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send('{ "op": 0 }');
     }
 }
 
-function TimeoutHandle(ws) {
+function TimeoutHandle(ws, Username) {
     if (ws.readyState === WebSocket.OPEN) {
         console.log('Cerrando conexión por inactividad')
         ws.close()
+        Usernames.filter(item => item !== Username)
     }
 }
 
