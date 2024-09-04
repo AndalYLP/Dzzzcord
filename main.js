@@ -15,7 +15,7 @@ const server = https.createServer((req, res) => {
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
-const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 10000
+const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 let heartbeatTimer
 let timeoutTimer
 
