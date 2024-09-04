@@ -59,6 +59,8 @@ wss.on('connection', (ws) => {
                 clearTimeout(timeoutTimer)
                 timeoutTimer = setTimeout(() => TimeoutHandle(ws, Username), TIMEOUT_INTERVAL);
             }
+        } else if (message.op == 3) {
+            ws.send(`{ "op": 3, "list": ${Usernames} }`)
         } else {
             ws.send('{ "error": "Invalid op" }')
         };
@@ -72,7 +74,7 @@ wss.on('connection', (ws) => {
 server.listen(8081, () => {
     console.log('Servidor HTTPS escuchando en el puerto 8081');
 });
-"sas".split(" ")
+
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send('{ "op": 0 }');
