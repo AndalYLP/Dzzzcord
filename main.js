@@ -1,11 +1,16 @@
 const WebSocket = require("ws");
 const express = require('express');
 const path = require("path");
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 4000
 
-app.get('/script.js', (req, res) => {
+app.get('/', (req, res) => {
+    res.send('https://dzzzcord.onrender.com/client.js')
+})
+
+app.get('/client.js', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'script.js');
     fs.readFile(filePath, (err, data) => {
         if (err) {
