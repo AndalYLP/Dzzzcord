@@ -112,7 +112,7 @@ wss.on('connection', (ws) => {
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(JSON.stringify({ "op": 3, "list": Array.from(mySet).join(", ") }))
+                ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames).join(", ") }))
             }
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')

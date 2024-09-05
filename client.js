@@ -5,6 +5,7 @@ let wss
 
 function connect() {
     console.clear()
+    let Username
     if (!wss) {
         wss = new WebSocket("wss://dzzzcord.onrender.com/")
 
@@ -23,17 +24,17 @@ function connect() {
                 setInterval(() => {
                     wss.send('{"op": 0}')
                 }, Message.heartbeat)
-
+                Username = Message.Username
                 console.group('%cConectado al canal principal', "color:lime; font-size: 20px");
-                console.log(`Tu nombre: ${Message.Username}`);
+                console.log(`Tu nombre: ${Username}`);
                 console.log(`En el canal: ${Message.inMainChannel} + 1 (Tú!)`);
                 console.log('Para ayuda usa el comando "Help()"')
                 console.groupEnd();
 
             } else if (Message.op == 2) {
                 d = new Date()
-                if (document.hidden) document.title = "(!)" + OriginalTitle
-                console.log(`[${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}] ${Message.Username}: ${Message.Message}`)
+                if (document.hidden) document.title = "(!) " + OriginalTitle
+                console.log(`\x1b[90m[${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${Message.Message}`)
             } else if (Message.op == 3) {
                 console.log(Message.list)
             } else if (Message.op == -1) {
