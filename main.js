@@ -2,9 +2,11 @@ const WebSocket = require("ws");
 const express = require('express');
 const path = require("path");
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 4000
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('https://dzzzcord.onrender.com/client.js')
