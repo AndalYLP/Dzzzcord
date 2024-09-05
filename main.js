@@ -5,8 +5,6 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 4000
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.get('/script.js', (req, res) => {
     const filePath = path.join(__dirname, 'public', 'script.js');
     fs.readFile(filePath, (err, data) => {
@@ -20,7 +18,7 @@ app.get('/script.js', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`App listening on port ${port}`)
 })
 
 const wss = new WebSocket.Server({ port: 8080 });
