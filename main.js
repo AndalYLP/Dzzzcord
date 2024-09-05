@@ -67,7 +67,7 @@ wss.on('connection', (ws) => {
             } else if (message.op == 2) {
                 if (Username) {
                     if ("Message" in message) {
-                        broadcast(`{ "op": 2, "Username": "${Username}", "Message" : "${message.Message}"}`)
+                        broadcast(JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message }))
                     }
                 } else {
                     ws.send('{ "error": "send op 1 first" }')
@@ -87,7 +87,7 @@ wss.on('connection', (ws) => {
                 ws.send(`{ "op": 3, "list": ${JSON.stringify(Usernames)} }`)
             }
         } else {
-            ws.send('{ "error": "Invalid op" }')
+            ws.send('{ "error": "Invalid message (not a valid json)" }')
         };
     });
 
