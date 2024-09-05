@@ -1,18 +1,11 @@
-/*
-    Tutorial:
-    sendMessage() : sirve para enviar un mensaje, dentro de los parentesis va el mensaje (tiene que ir con comillas y si quieres poner comillas dentro del mensaje tienen que ir asi (\\\")) ejemplo: sendMessage("Hola!")
-    getOnline() : Ve las personas que esten online, no poner nada dentro de los parentesis.
-*/
-
-
 const Names = document.querySelector('[class="sh-navbar__user-thumb"]').alt.split(" ")
 let OriginalTitle = document.title
 
 let wss
 
 function connect() {
+    console.clear()
     if (!wss) {
-        console.clear()
         wss = new WebSocket("wss://dzzzcord.onrender.com/")
 
         wss.onclose = () => {
@@ -34,6 +27,7 @@ function connect() {
                 console.group('%cConectado al canal principal', "color:lime; font-size: 20px");
                 console.log(`Tu nombre: ${Message.Username}`);
                 console.log(`En el canal: ${Message.inMainChannel} + 1 (Tú!)`);
+                console.log('Para ayuda usa el comando "Help()"')
                 console.groupEnd();
 
             } else if (Message.op == 2) {
@@ -62,6 +56,14 @@ function getOnline() {
     wss.send('{"op": 3}')
 }
 
+function Help() {
+    console.group('%cComandos', "color:blue; font-size: 20px");
+    console.log(`\x1b[33msendMessage("Mensaje aqui")\x1b[0m te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
+    console.log(`\x1b[33mgetOnline()\x1b[0m te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
+    console.log('Proximamente más comandos.')
+    console.groupEnd();
+}
+
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
         document.title = OriginalTitle
@@ -69,8 +71,3 @@ document.addEventListener('visibilitychange', () => {
 });
 
 connect()
-/*
-    Tutorial:
-    sendMessage() : sirve para enviar un mensaje, dentro de los parentesis va el mensaje (tiene que ir con comillas) ejemplo: sendMessage("Hola!")
-    getOnline() : Ve las personas que esten online, no poner nada dentro de los parentesis.
-*/

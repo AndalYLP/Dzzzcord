@@ -1,12 +1,15 @@
-const express = require('express');
 const WebSocket = require("ws");
-const cors = require('cors');
-const path = require("path");
-const fs = require('fs');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 /* jaja no funciona por restricciones pero igual se queda aqui
+    "express": "^4.17.3",
+    "cors": "^2.8.5"
+
+const cors = require('cors');
+const path = require("path");
+const fs = require('fs');
+const express = require('express');
 const app = express();
 const port = process.env.PORT || 4000
 app.use(cors());
@@ -41,7 +44,7 @@ let Usernames = new Set()
 let MainChannel = new Set()
 
 wss.on('connection', (ws) => {
-    console.log('New client connected');
+    console.log('New client connected', Usernames);
     let Username
     let wsChannel
 
@@ -109,7 +112,7 @@ wss.on('connection', (ws) => {
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(JSON.stringify({ "op": 3, "list": JSON.stringify(Usernames) }))
+                ws.send(JSON.stringify({ "op": 3, "list": JSON.stringify(Usernames.values()) }))
             }
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')
