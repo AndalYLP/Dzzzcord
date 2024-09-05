@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/client.js', (req, res) => {
-    const filePath = path.join(__dirname, 'public', 'script.js');
+    const filePath = path.join(__dirname, 'client.js');
     fs.readFile(filePath, (err, data) => {
         if (err) {
             res.status(500).send('Error al cargar el archivo');
