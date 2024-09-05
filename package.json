@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "ws": "^8.7.0",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "cors": "^2.8.5"
   }
 }
