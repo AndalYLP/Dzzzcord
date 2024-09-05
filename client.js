@@ -12,6 +12,7 @@ let wss
 
 function connect() {
     if (!wss) {
+        console.clear()
         wss = new WebSocket("wss://dzzzcord.onrender.com/")
 
         wss.onclose = () => {
@@ -68,8 +69,6 @@ document.addEventListener('visibilitychange', () => {
 });
 
 connect()
-
-console.clear()
 /*
     Tutorial:
     sendMessage() : sirve para enviar un mensaje, dentro de los parentesis va el mensaje (tiene que ir con comillas) ejemplo: sendMessage("Hola!")
