@@ -1,8 +1,8 @@
-const WebSocket = require("ws");
 const express = require('express');
+const WebSocket = require("ws");
+const cors = require('cors');
 const path = require("path");
 const fs = require('fs');
-const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 4000
@@ -24,15 +24,11 @@ app.get('/client.js', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
-})
-
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
-console.log(TIMEOUT_INTERVAL)
+
 let heartbeatTimer
 let timeoutTimer
 
@@ -115,6 +111,10 @@ wss.on('connection', (ws) => {
         console.log('Cliente desconectado');
     });
 });
+
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`)
+})
 
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
