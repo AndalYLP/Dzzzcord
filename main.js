@@ -44,7 +44,7 @@ let Usernames = new Set()
 let MainChannel = new Set()
 
 wss.on('connection', (ws) => {
-    console.log('New client connected', Usernames);
+    console.log('New client connected');
     let Username
     let wsChannel
 
@@ -112,7 +112,7 @@ wss.on('connection', (ws) => {
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(JSON.stringify({ "op": 3, "list": JSON.stringify(Usernames.values()) }))
+                ws.send(JSON.stringify({ "op": 3, "list": Array.from(mySet).join(", ") }))
             }
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')
