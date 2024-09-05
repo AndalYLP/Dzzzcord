@@ -74,12 +74,14 @@ wss.on('connection', (ws) => {
                     if ("Username" in message) {
                         u = message.Username
                         let e = 0
-                        Usernames.find(v => { if (v.substring(0, u.length) == u) e = 1 + e })
-                        Username = u + ((e != 0) ? e : "")
-                        Usernames.push(Username)
+
+                        while (true) {
+                            if (Usernames.has(u)) e += 1; else Username = u + ((e != 0) ? e : ""); break
+                        }
+                        Usernames.add(Username)
 
                         ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.length }))
-                        MainChannel.push(Username)
+                        MainChannel.add(Username)
                         wsChannel = MainChannel
                     } else {
                         ws.send('{ "error": "Username index not found" }')
