@@ -80,7 +80,7 @@ wss.on('connection', (ws) => {
                         }
                         Usernames.add(Username)
 
-                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.length }))
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size }))
                         MainChannel.add(Username)
                         wsChannel = MainChannel
                     } else {
