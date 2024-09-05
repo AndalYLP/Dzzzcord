@@ -112,9 +112,6 @@ wss.on('connection', (ws) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
-})
 
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
