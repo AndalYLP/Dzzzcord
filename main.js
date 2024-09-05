@@ -51,12 +51,12 @@ wss.on('connection', (ws) => {
             console.log('Cerrando conexión por inactividad')
             ws.close()
             MainChannel.delete(Username)
-            Username.delete(Username)
+            Usernames.delete(Username)
         }
     }, TIMEOUT_INTERVAL);
 
     ws.on("close", () => {
-        Username.delete(Username)
+        Usernames.delete(Username)
         MainChannel.delete(Username)
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
