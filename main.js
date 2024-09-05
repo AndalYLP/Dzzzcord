@@ -2,12 +2,21 @@ const WebSocket = require("ws");
 const https = require('https');
 
 const server = https.createServer((req, res) => {
-    res.setHeader('Content-Type', 'text/html');
-    res.end(`
-    <html>
-      <body style="margin: 0; padding: 0;">
-      </body>
-    </html>`);
+    const filePath = path.join(__dirname, 'client.js');
+    if (req.url === '/script.js') {
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(500);
+                res.end('Error al cargar el archivo');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/javascript' });
+                res.end(data);
+            }
+        });
+    } else {
+        res.writeHead(200);
+        res.end('Holi');
+    }
 });
 const wss = new WebSocket.Server({ port: 8080 });
 
