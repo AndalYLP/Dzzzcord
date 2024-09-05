@@ -21,10 +21,12 @@ let heartbeatTimer
 let timeoutTimer
 
 let Usernames = []
+let MainChannel = []
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
     let Username
+    let wsChannel
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
@@ -57,7 +59,9 @@ wss.on('connection', (ws) => {
                         Username = u + ((e != 0) ? e : "")
                         Usernames.push(Username)
 
-                        ws.send(`{ "op": 1 , "heartbeat": ${HEARTBEAT_INTERVAL}, "Username": "${Username}" }`)
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.length }))
+                        MainChannel.push(Username)
+                        wsChannel = MainChannel
                     } else {
                         ws.send('{ "error": "Username index not found" }')
                     }
@@ -84,7 +88,7 @@ wss.on('connection', (ws) => {
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(`{ "op": 3, "list": ${JSON.stringify(Usernames)} }`)
+                ws.send(JSON.stringify({ "op": 3, "list": JSON.stringify(Usernames) }))
             }
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')
