@@ -20,7 +20,7 @@ console.log(TIMEOUT_INTERVAL)
 let heartbeatTimer
 let timeoutTimer
 
-const Usernames = []
+let Usernames = []
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
@@ -31,12 +31,12 @@ wss.on('connection', (ws) => {
         if (ws.readyState === WebSocket.OPEN) {
             console.log('Cerrando conexión por inactividad')
             ws.close()
-            Usernames.filter(item => item !== Username)
+            Usernames = Usernames.filter(item => item !== Username)
         }
     }, TIMEOUT_INTERVAL);
 
     ws.on("close", () => {
-        Usernames.filter(item => item !== Username)
+        Usernames = Usernames.filter(item => item !== Username)
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
     })
@@ -80,7 +80,7 @@ wss.on('connection', (ws) => {
                         console.log('Cerrando conexión por inactividad')
                         ws.send('{"op": -1, "Desconectando..."}')
                         ws.close()
-                        Usernames.filter(item => item !== Username)
+                        Usernames = Usernames.filter(item => item !== Username)
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
