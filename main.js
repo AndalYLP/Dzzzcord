@@ -1,23 +1,27 @@
 const WebSocket = require("ws");
-const https = require('https');
+const express = require('express');
+const path = require("path");
 
-const server = https.createServer((req, res) => {
-    const filePath = path.join(__dirname, 'client.js');
-    if (req.url === '/script.js') {
-        fs.readFile(filePath, (err, data) => {
-            if (err) {
-                res.writeHead(500);
-                res.end('Error al cargar el archivo');
-            } else {
-                res.writeHead(200, { 'Content-Type': 'application/javascript' });
-                res.end(data);
-            }
-        });
-    } else {
-        res.writeHead(200);
-        res.end('Holi');
-    }
+const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/script.js', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'script.js');
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.status(500).send('Error al cargar el archivo');
+        } else {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.send(data);
+        }
+    });
 });
+
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`Example app listening on port ${port}`)
+})
+
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
@@ -104,10 +108,6 @@ wss.on('connection', (ws) => {
     ws.on('close', () => {
         console.log('Cliente desconectado');
     });
-});
-
-server.listen(8081, () => {
-    console.log('Servidor HTTPS escuchando en el puerto 8081');
 });
 
 function HeartbeatHandle(ws) {
