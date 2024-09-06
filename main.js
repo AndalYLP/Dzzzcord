@@ -45,6 +45,7 @@ wss.on('connection', (ws) => {
                         u = message.Username
                         let e = 0
 
+                        Usernames.forEach(v => { if (v.substring(0, u.length) == u) e = 1 + e })
                         while (true) {
                             if (Usernames.has(u)) {
                                 e += 1
