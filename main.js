@@ -2,34 +2,6 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-const cors = require('cors');
-const path = require("path");
-const fs = require('fs');
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 4000
-app.use(cors());
-
-app.get('/', (req, res) => {
-    res.send('https://dzzzcord.onrender.com/client.js')
-})
-
-app.get('/client.js', (req, res) => {
-    const filePath = path.join(__dirname, 'client.js');
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            res.status(500).send('Error al cargar el archivo');
-        } else {
-            res.setHeader('Content-Type', 'application/javascript');
-            res.send(data);
-        }
-    });
-});
-
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
-})
-
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
@@ -124,6 +96,34 @@ wss.on('connection', (ws) => {
         console.log('Cliente desconectado');
     });
 });
+
+const cors = require('cors');
+const path = require("path");
+const fs = require('fs');
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 4000
+app.use(cors());
+
+app.get('/', (req, res) => {
+    res.send('https://dzzzcord.onrender.com/client.js')
+})
+
+app.get('/client.js', (req, res) => {
+    const filePath = path.join(__dirname, 'client.js');
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.status(500).send('Error al cargar el archivo');
+        } else {
+            res.setHeader('Content-Type', 'application/javascript');
+            res.send(data);
+        }
+    });
+});
+
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`)
+})
 
 
 function HeartbeatHandle(ws) {
