@@ -78,7 +78,7 @@ wss.on('connection', (ws) => {
                         d = new Date()
                         msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${new Date().toISOString()}` })
                         console.log(wsChannel.values().next().value)
-                        wsChannel.values().next().value.push(msg)
+                        wsChannel.get(1).push(msg)
                         broadcast(msg)
                     }
                 } else {
