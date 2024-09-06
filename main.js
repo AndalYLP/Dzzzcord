@@ -9,7 +9,6 @@ let Channels = [new Map([["Name", "MainChannel"], ["Messages", []], ["Users", ne
 let Usernames = new Map()
 let MainChannel = Channels[0]
 
-
 wss.on('connection', (ws) => {
     console.log('New client connected');
     let heartbeatTimer
@@ -125,7 +124,6 @@ wss.on('connection', (ws) => {
                         Channels.forEach(v => { console.log(v); if (v && v.get("Name").substring(0, n.length) == n) e += 1 })
                         Name = u + ((e != 0) ? e : "")
 
-                        Channels.find(map => { if (map.get("ValidTokens")[Username]) return true; else return false })
                         message.Users.forEach(v => {
                             if (Usernames.has(v)) {
                                 UserInfo = Usernames.get(v)
@@ -144,7 +142,7 @@ wss.on('connection', (ws) => {
             } else if (message.op == 6) {
                 if (Username) {
                     if ("Channel" in message) {
-                        if (Channels.get(message.Channel) && Channels.find(map => { if (map["ValidTokens"][Username]) return true; else return false })) {
+                        if (Channels.get(message.Channel) && Channels.find(map => { if (map.has("ValidTokens") && Username in map.has("ValidTokens")) return true; else return false })) {
                             wsChannel.get("Users").remove(Username)
                             wsChannel = Channels.get(message.Channel)
                             wsChannel.get("Users").set(Username, ws)
