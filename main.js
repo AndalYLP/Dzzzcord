@@ -27,10 +27,16 @@ wss.on('connection', (ws) => {
     }, TIMEOUT_INTERVAL);
 
     ws.on("close", () => {
-        Usernames.delete(Username)
-        MainChannel.delete(Username)
+        console.log('Cliente desconectado');
+        Usernames.delete(Username);
+        MainChannel.delete(Username);
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
+        wss.clients.forEach((client) => {
+            if (client != ws && client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ "op": -2, "Username": Username, "Leaving": true }));
+            }
+        });
     })
 
     ws.onerror = (error) => {
@@ -56,7 +62,7 @@ wss.on('connection', (ws) => {
 
                         wss.clients.forEach((client) => {
                             if (client != ws && client.readyState === WebSocket.OPEN) {
-                                client.send(JSON.stringify({ "op": -2, "Username": Username }));
+                                client.send(JSON.stringify({ "op": -2, "Username": Username, "Leaving": false }));
                             }
                         });
                     } else {
@@ -94,10 +100,6 @@ wss.on('connection', (ws) => {
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')
         };
-    });
-
-    ws.on('close', () => {
-        console.log('Cliente desconectado');
     });
 });
 

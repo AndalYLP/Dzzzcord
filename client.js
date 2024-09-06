@@ -46,7 +46,7 @@ function connect() {
                 console.log("Reconnecting...")
                 connect()
             } else if (Message.op == -2) {
-                console.log(`\x1b[33m${Message.Username}\x1b[90m se ha unido.`)
+                console.log(`${((Message.Leaving) ? "⬅️" : "➡️")}\x1b[33m${Message.Username}\x1b[90m ${((Message.Leaving) ? "se ha ido." : "se ha unido.")} `)
             };
         };
     } else {
@@ -64,7 +64,7 @@ function getOnline() {
 
 function Help() {
     console.group('%cComandos', "color:blue; font-size: 20px");
-    console.log(`\x1b[33msendMessage("Mensaje aqui")\x1b[0m te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
+    console.log(`\x1b[33msendMessage("Mensaje aqui") \x1b[0m te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
     console.log(`\x1b[33mgetOnline()\x1b[0m te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
     console.log('Proximamente más comandos.')
     console.groupEnd();
