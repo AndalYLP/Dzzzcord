@@ -2,10 +2,6 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-/* jaja no funciona por restricciones pero igual se queda aqui
-    "express": "^4.17.3",
-    "cors": "^2.8.5"
-
 const cors = require('cors');
 const path = require("path");
 const fs = require('fs');
@@ -33,7 +29,6 @@ app.get('/client.js', (req, res) => {
 app.listen(port, () => {
     console.log(`App listening on port ${port}`)
 })
-*/
 
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
