@@ -5,10 +5,10 @@ const wss = new WebSocket.Server({ port: 8080 });
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
+let Channels = [new Map([["Name", "MainChannel"], ["Messages", []], ["Users", new Map()]])]
 let Usernames = new Map()
-let MainChannel = new Map()
+let MainChannel = Channels[0]
 
-MainChannel.set(1, [])
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
@@ -22,7 +22,7 @@ wss.on('connection', (ws) => {
         if (ws.readyState === WebSocket.OPEN) {
             console.log('Cerrando conexión por inactividad')
             ws.close()
-            MainChannel.delete(Username)
+            wsChannel.get("Users").delete(Username)
             Usernames.delete(Username)
         }
     }, TIMEOUT_INTERVAL);
@@ -30,7 +30,7 @@ wss.on('connection', (ws) => {
     ws.on("close", () => {
         console.log('Cliente desconectado');
         Usernames.delete(Username);
-        MainChannel.delete(Username);
+        wsChannel.get("Users").delete(Username);
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
         wss.clients.forEach((client) => {
@@ -49,17 +49,17 @@ wss.on('connection', (ws) => {
             message = JSON.parse(message)
             if (message.op == 1) {
                 if (!Username) {
-                    if ("Username" in message) {
+                    if ("Username" in message && "Token" in message) {
                         u = message.Username
                         let e = 0
-
-                        Usernames.forEach((i, v) => { if (v && v.substring(0, u.length) == u) e = 1 + e })
+                        Usernames.forEach((i, v) => { if (v && v.substring(0, u.length) == u) e += 1 })
                         Username = u + ((e != 0) ? e : "")
-                        Usernames.set(Username, ws)
+                        Usernames.set(Username, [message.Token, ws])
+                        console.log(Username + " " + message.Token)
 
-                        MainChannel.set(Username, ws)
                         wsChannel = MainChannel
-                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size - 2, "Messages": wsChannel.get(1) }))
+                        wsChannel.get("Users").set(Username, ws)
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.get("Users").size - 1, "Messages": wsChannel.get("Messages") }))
 
                         wss.clients.forEach((client) => {
                             if (client != ws && client.readyState === WebSocket.OPEN) {
@@ -77,8 +77,7 @@ wss.on('connection', (ws) => {
                     if ("Message" in message) {
                         d = new Date()
                         msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${new Date().toISOString()}` })
-                        console.log(wsChannel.values().next().value)
-                        wsChannel.get(1).push(msg)
+                        wsChannel.get("Messages").push(msg)
                         broadcast(msg)
                     }
                 } else {
@@ -103,16 +102,54 @@ wss.on('connection', (ws) => {
                 }
             } else if (message.op == 4) {
                 if (Username) {
-                    if (message.Message && message.User) {
+                    if ("Message" in message && "User" in message) {
                         if (Usernames.has(message.User)) {
                             msg = JSON.stringify({ "op": 4, "Username": Username, "Message": message.Message, "Time": `${new Date().toISOString()}` })
-                            Usernames.get(message.User).send(msg)
+                            Usernames.get(message.User)[1].send(msg)
                             ws.send(msg)
                         } else {
                             ws.send('{ "error": "Message or user not found" }')
                         }
                     } else {
                         ws.send('{ "error": "Message or user not found" }')
+                    }
+                } else {
+                    ws.send('{ "error": "send op 1 first" }')
+                }
+            } else if (message.op == 5) {
+                if (Username) {
+                    if ("Users" in message && "Name" in message) {
+                        let Tokens = new Map()
+                        n = message.Username
+                        let e = 0
+                        Channels.forEach(v => { if (v && v["Name"].substring(0, n.length) == n) e += 1 })
+                        Name = u + ((e != 0) ? e : "")
+
+                        Channels.find(map => { if (map["ValidTokens"][Username]) return true; else return false })
+                        message.Users.forEach(v => {
+                            if (Usernames.has(v)) {
+                                UserInfo = Usernames.get(v)
+                                Tokens.set(v, UserInfo[0])
+                                UserInfo[1].send(JSON.stringify({ "op": 51, "Name": Name }))
+                            } else {
+                                ws.send(JSON.stringify({ "op": 52, "User": v }))
+                            }
+                        });
+                        Channels.push(([["Name", Name], ["ValidTokens", Tokens], ["Owner", Username], ["Messages", []], ["Users", new Map()]]))
+                        ws.send(JSON.stringify({ "op": 5, "Name": Name }))
+                    }
+                } else {
+                    ws.send('{ "error": "send op 1 first" }')
+                }
+            } else if (message.op == 6) {
+                if (Username) {
+                    if ("Channel" in message) {
+                        if (Channels.get(message.Channel) && Channels.find(map => { if (map["ValidTokens"][Username]) return true; else return false })) {
+                            wsChannel.get("Users").remove(Username)
+                            wsChannel = Channels.get(message.Channel)
+                            wsChannel.get("Users").set(Username, ws)
+                            ws.send(JSON.stringify({ "op": 6, "Channel": wsChannel.get("Name"), "Owner": ((wsChannel.has("Owner") ? wsChannel.get("Owner") : false)), "inChannel": wsChannel.get("Users").size - 1 }))
+                        }
                     }
                 } else {
                     ws.send('{ "error": "send op 1 first" }')

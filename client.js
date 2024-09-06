@@ -1,3 +1,5 @@
+const { json } = require("express")
+
 const Names = document.querySelector('[class="sh-navbar__user-thumb"]').alt.split(" ")
 let OriginalTitle = document.title
 let NotReadMessages = 0
@@ -17,7 +19,7 @@ function connect() {
         wss.onopen = () => {
             while (true) {
                 if (wss.readyState === WebSocket.OPEN) {
-                    wss.send(JSON.stringify({ "op": 1, "Username": Names[2].toLowerCase() }))
+                    wss.send(JSON.stringify({ "op": 1, "Username": Names[2].toLowerCase(), "Token": JSON.parse(localStorage.TOKEN_V4_CIMA).token }))
                     break
                 }
             }
@@ -40,12 +42,30 @@ function connect() {
                     v = JSON.parse(v)
                     console.log(`\x1b[90m[${new Date(v.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
                 });
-            } else if (Message.op == 2) {
+            } else if (Message.op == 2 || Message.op == 4) {
                 d = new Date()
                 if (document.hidden) { NotReadMessages += 1; document.title = `(${NotReadMessages}) ${OriginalTitle}` }
-                console.log(`\x1b[90m[${new Date(Message.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${Message.Message}`)
+                console.log(`🔒 \x1b[90m[${new Date(Message.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${((Message.op == 4) ? "\x1b[44m" : "")}${Message.Message}`)
             } else if (Message.op == 3) {
                 console.log(Message.list)
+            } else if (Message.op == 5) {
+                console.log(`✅ Canal con el nombre \x1b[33m${Message.Name}\x1b[0m creado.`)
+            } else if (Message.op == 51) {
+                console.log(`➕ Te añadieron al canal \x1b[33m${Message.Name}\x1b[0m!`)
+            } else if (Message.op == 52) {
+                console.log(`❗ No se encontro al usuario \x1b[33m${Message.User}\x1b[0m.`)
+            } else if (Message.op == 6) {
+                console.clear()
+                console.group(`%cConectado al canal ${Message.Channel}`, "color:lime; font-size: 20px");
+                console.log(`Tu nombre: \x1b[1m${Username}`);
+                if (Message.Owner) console.log(`Creador: ${Message.Owner}`)
+                console.log(`En el canal: \x1b[1m${Message.inChannel} + 1 \x1b[90m(Tú!)`);
+                console.log('Para ayuda usa el comando \x1b[33mHelp()')
+                console.groupEnd();
+                Message.Messages.forEach(v => {
+                    v = JSON.parse(v)
+                    console.log(`\x1b[90m[${new Date(v.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
+                });
             } else if (Message.op == -1) {
                 console.log("Reconnecting...")
                 connect()
@@ -62,12 +82,16 @@ function sendMessage(Message) {
     wss.send(JSON.stringify({ "op": 2, "Message": Message }))
 }
 
-function whisp(Message, Username) {
+function whisp(Message, User) {
     wss.send(JSON.stringify({ "op": 4, "Message": Message, "User": Username }))
 }
 
-function createChannel(Usernames = [], Name) {
-    wss.send(JSON.stringify({}))
+function createChannel(Users = [], ChannelName) {
+    wss.send(JSON.stringify({ "op": 5, "Users": Users, "Name": ChannelName }))
+}
+
+function gotoChannel(channelName) {
+    wss.send(JSON.stringify({ "op": 6, "Channel": channelName }))
 }
 
 function getOnline() {
@@ -76,8 +100,11 @@ function getOnline() {
 
 function Help() {
     console.group('%cComandos', "color:blue; font-size: 20px");
-    console.log(`\x1b[33msendMessage("Mensaje aqui") \x1b[0m te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
-    console.log(`\x1b[33mgetOnline()\x1b[0m te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
+    console.log(`\x1b[33msendMessage("Mensaje aqui") \x1b[0m Te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
+    console.log(`\x1b[33mwhisp("Mensaje aqui", "destinatario") \x1b[0m Te sirve para enviar un mensaje que solo una persona lo puede ver ejemplo: whisp("Hola Usuario1!", "Usuario1"), si quieres usar comillas usa \\"`);
+    console.log(`\x1b[33mgotoChannel("Nombre del canal")\x1b[0m Ve a un canal en el que estes por ejemplo: gotoChannel("MainChannel")`);
+    console.log(`\x1b[33mcreateChannel(["Usuario1","Usuario2"], "Nombre del canal")\x1b[0m Crea un canal ejemplo: createChannel(["Usuario1","Usuario2"], "Los npcs")`);
+    console.log(`\x1b[33mgetOnline()\x1b[0m Te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
     console.log('Proximamente más comandos.')
     console.groupEnd();
 }
