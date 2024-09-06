@@ -37,6 +37,7 @@ function connect() {
                 console.groupEnd();
 
                 Message.Messages.forEach(v => {
+                    v = JSON.parse(v)
                     console.log(`\x1b[90m[${v.Time}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
                 });
             } else if (Message.op == 2) {

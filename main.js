@@ -92,7 +92,7 @@ wss.on('connection', (ws) => {
                         console.log('Cerrando conexión por inactividad')
                         ws.send('{"op": -1, "Desconectando..."}')
                         ws.close()
-                        Usernames = Usernames.filter(item => item !== Username)
+                        Usernames.delete(Username)
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
