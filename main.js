@@ -59,7 +59,7 @@ wss.on('connection', (ws) => {
 
                         MainChannel.add(Username)
                         wsChannel = MainChannel
-                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size, "Messages": wsChannel.values().next().value }))
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size - 2, "Messages": wsChannel.values().next().value }))
 
                         wss.clients.forEach((client) => {
                             if (client != ws && client.readyState === WebSocket.OPEN) {
@@ -76,7 +76,7 @@ wss.on('connection', (ws) => {
                 if (Username) {
                     if ("Message" in message) {
                         d = new Date()
-                        msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}` })
+                        msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${new Date().toISOString()}` })
                         console.log(wsChannel.values().next().value)
                         wsChannel.values().next().value.push(msg)
                         broadcast(msg)
