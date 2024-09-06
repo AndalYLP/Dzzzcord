@@ -46,7 +46,7 @@ function connect() {
                 console.log("Reconnecting...")
                 connect()
             } else if (Message.op == -2) {
-                console.log(`${((Message.Leaving) ? "⬅️" : "➡️")}\x1b[33m${Message.Username}\x1b[90m ${((Message.Leaving) ? "se ha ido." : "se ha unido.")} `)
+                console.log(`${((Message.Leaving) ? "⬅️" : "➡️")}\x1b[33m ${Message.Username}\x1b[90m ${((Message.Leaving) ? "se ha ido." : "se ha unido.")} `)
             };
         };
     } else {

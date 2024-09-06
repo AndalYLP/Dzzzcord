@@ -7,7 +7,7 @@ const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
 let Usernames = new Set()
-let MainChannel = new Set()
+let MainChannel = new Set([])
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
@@ -56,9 +56,9 @@ wss.on('connection', (ws) => {
                         Username = u + ((e != 0) ? e : "")
                         Usernames.add(Username)
 
-                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size }))
                         MainChannel.add(Username)
                         wsChannel = MainChannel
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size, "Messages": wsChannel.values().next().value }))
 
                         wss.clients.forEach((client) => {
                             if (client != ws && client.readyState === WebSocket.OPEN) {
@@ -74,7 +74,10 @@ wss.on('connection', (ws) => {
             } else if (message.op == 2) {
                 if (Username) {
                     if ("Message" in message) {
-                        broadcast(JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message }))
+                        d = new Date()
+                        msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}` })
+                        wsChannel.values().next().value.push(msg)
+                        broadcast(msg)
                     }
                 } else {
                     ws.send('{ "error": "send op 1 first" }')
