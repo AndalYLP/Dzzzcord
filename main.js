@@ -1,22 +1,13 @@
 const WebSocket = require("ws");
-const path = require("path");
-const fs = require('fs');
-
-let ClientScript
-fs.readFile(path.join(__dirname, 'client.js'), 'utf8', (err, data) => {
-    if (err) {
-        throw new Error("Error reading client script")
-    }
-    ClientScript = data;
-});
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
-let Usernames = new Set()
-let MainChannel = new Set()
+let Usernames = new Map()
+let MainChannel = new Map()
+
 MainChannel.add([])
 
 wss.on('connection', (ws) => {
@@ -25,8 +16,6 @@ wss.on('connection', (ws) => {
     let timeoutTimer
     let Username
     let wsChannel
-
-    ws.send(ClientScript)
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
@@ -64,11 +53,11 @@ wss.on('connection', (ws) => {
                         u = message.Username
                         let e = 0
 
-                        Usernames.forEach(v => { if (v && v.substring(0, u.length) == u) e = 1 + e })
+                        Usernames.forEach((i, v) => { if (v && v.substring(0, u.length) == u) e = 1 + e })
                         Username = u + ((e != 0) ? e : "")
-                        Usernames.add(Username)
+                        Usernames.set(Username, ws)
 
-                        MainChannel.add(Username)
+                        MainChannel.set(Username, ws)
                         wsChannel = MainChannel
                         ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size - 2, "Messages": wsChannel.values().next().value }))
 
@@ -108,14 +97,20 @@ wss.on('connection', (ws) => {
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
                 if (Username) {
-                    ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames).join(", ") }))
+                    ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames.keys()).join(", ") }))
                 } else {
                     ws.send('{ "error": "send op 1 first" }')
                 }
             } else if (message.op == 4) {
                 if (Username) {
                     if (message.Message && message.User) {
-
+                        if (Usernames.has(message.User)) {
+                            msg = JSON.stringify({ "op": 4, "Username": Username, "Message": message.Message, "Time": `${new Date().toISOString()}` })
+                            Usernames.get(message.User).send(msg)
+                            ws.send(msg)
+                        } else {
+                            ws.send('{ "error": "Message or user not found" }')
+                        }
                     } else {
                         ws.send('{ "error": "Message or user not found" }')
                     }
@@ -131,34 +126,6 @@ wss.on('connection', (ws) => {
     });
 });
 
-/*
-const cors = require('cors');
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 4000
-app.use(cors());
-
-app.get('/', (req, res) => {
-    res.send('https://dzzzcord.onrender.com/client.js')
-})
-
-app.get('/client.js', (req, res) => {
-    const filePath = path.join(__dirname, 'client.js');
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            res.status(500).send('Error al cargar el archivo');
-        } else {
-            res.setHeader('Content-Type', 'application/javascript');
-            res.send(data);
-        }
-    });
-});
-
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
-})
-
-*/
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send('{ "op": 0 }');
