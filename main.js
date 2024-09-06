@@ -52,7 +52,7 @@ wss.on('connection', (ws) => {
                         u = message.Username
                         let e = 0
 
-                        Usernames.forEach(function (v) { if (v && v.substring(0, u.length) == u) e = 1 + e })
+                        Usernames.forEach(v => { if (v && v.substring(0, u.length) == u) e = 1 + e })
                         Username = u + ((e != 0) ? e : "")
                         Usernames.add(Username)
 
@@ -76,6 +76,7 @@ wss.on('connection', (ws) => {
                     if ("Message" in message) {
                         d = new Date()
                         msg = JSON.stringify({ "op": 2, "Username": Username, "Message": message.Message, "Time": `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}` })
+                        console.log(wsChannel.values().next().value)
                         wsChannel.values().next().value.push(msg)
                         broadcast(msg)
                     }

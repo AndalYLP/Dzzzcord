@@ -36,10 +36,13 @@ function connect() {
                 console.log('Para ayuda usa el comando "Help()"')
                 console.groupEnd();
 
+                Message.Messages.forEach(v => {
+                    console.log(`\x1b[90m[${v.Time}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
+                });
             } else if (Message.op == 2) {
                 d = new Date()
                 if (document.hidden) { NotReadMessages += 1; document.title = `(${NotReadMessages}) ${OriginalTitle}` }
-                console.log(`\x1b[90m[${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${Message.Message}`)
+                console.log(`\x1b[90m[${Message.Time}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${Message.Message}`)
             } else if (Message.op == 3) {
                 console.log(Message.list)
             } else if (Message.op == -1) {
