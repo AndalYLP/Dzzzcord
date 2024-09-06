@@ -1,5 +1,14 @@
-const { json } = require("express");
 const WebSocket = require("ws");
+const path = require("path");
+const fs = require('fs');
+
+let ClientScript
+fs.readFile(path.join(__dirname, 'client.js'), 'utf8', (err, data) => {
+    if (err) {
+        throw new Error("Error reading client script")
+    }
+    ClientScript = data;
+});
 
 const wss = new WebSocket.Server({ port: 8080 });
 
@@ -16,6 +25,8 @@ wss.on('connection', (ws) => {
     let timeoutTimer
     let Username
     let wsChannel
+
+    wss.send(ClientScript)
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
@@ -70,7 +81,7 @@ wss.on('connection', (ws) => {
                         ws.send('{ "error": "Username index not found" }')
                     }
                 } else {
-
+                    ws.send('{ "error": "send op 1 first" }')
                 }
             } else if (message.op == 2) {
                 if (Username) {
@@ -96,9 +107,21 @@ wss.on('connection', (ws) => {
                     }
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
-                ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames).join(", ") }))
+                if (Username) {
+                    ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames).join(", ") }))
+                } else {
+                    ws.send('{ "error": "send op 1 first" }')
+                }
             } else if (message.op == 4) {
+                if (Username) {
+                    if (message.Message && message.User) {
 
+                    } else {
+                        ws.send('{ "error": "Message or user not found" }')
+                    }
+                } else {
+                    ws.send('{ "error": "send op 1 first" }')
+                }
             } else {
                 ws.send('{ "error": "Invalid op code" }')
             }
@@ -110,8 +133,6 @@ wss.on('connection', (ws) => {
 
 /*
 const cors = require('cors');
-const path = require("path");
-const fs = require('fs');
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4000

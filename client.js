@@ -31,14 +31,14 @@ function connect() {
                 }, Message.heartbeat)
                 Username = Message.Username
                 console.group('%cConectado al canal principal', "color:lime; font-size: 20px");
-                console.log(`Tu nombre: ${Username}`);
-                console.log(`En el canal: ${Message.inMainChannel} + 1 (Tú!)`);
-                console.log('Para ayuda usa el comando "Help()"')
+                console.log(`Tu nombre: \x1b[1m${Username}`);
+                console.log(`En el canal: \x1b[1m${Message.inMainChannel} + 1 \x1b[90m(Tú!)`);
+                console.log('Para ayuda usa el comando \x1b[33mHelp()')
                 console.groupEnd();
 
                 Message.Messages.forEach(v => {
                     v = JSON.parse(v)
-                    console.log(`\x1b[90m[${v.Time}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
+                    console.log(`\x1b[90m[${new Date(v.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((v.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${v.Username}\x1b[0m: ${v.Message}`)
                 });
             } else if (Message.op == 2) {
                 d = new Date()
@@ -60,6 +60,14 @@ function connect() {
 
 function sendMessage(Message) {
     wss.send(JSON.stringify({ "op": 2, "Message": Message }))
+}
+
+function whisp(Message, Username) {
+    wss.send(JSON.stringify({ "op": 4, "Message": Message, "User": Username }))
+}
+
+function createChannel(Usernames = [], Name) {
+    wss.send(JSON.stringify({}))
 }
 
 function getOnline() {
