@@ -142,7 +142,7 @@ wss.on('connection', (ws) => {
             } else if (message.op == 6) {
                 if (Username) {
                     if ("Channel" in message) {
-                        if (Channels.get(message.Channel) && Channels.find(map => { if (map.has("ValidTokens") && Username in map.has("ValidTokens")) return true; else return false })) {
+                        if (message.Channel in Channels && Channels.find(map => { if (map.has("ValidTokens") && Username in map.has("ValidTokens")) return true; else return false })) {
                             wsChannel.get("Users").remove(Username)
                             wsChannel = Channels.get(message.Channel)
                             wsChannel.get("Users").set(Username, ws)
