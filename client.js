@@ -1,5 +1,3 @@
-const { json } = require("express")
-
 const Names = document.querySelector('[class="sh-navbar__user-thumb"]').alt.split(" ")
 let OriginalTitle = document.title
 let NotReadMessages = 0
