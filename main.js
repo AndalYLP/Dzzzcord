@@ -119,13 +119,13 @@ wss.on('connection', (ws) => {
             } else if (message.op == 5) {
                 if (Username) {
                     if ("Users" in message && "Name" in message) {
-                        let Tokens = new Map()
-                        n = message.Username
+                        let Tokens = new Map([[Username, ws]])
+                        n = message.Name
                         let e = 0
                         Channels.forEach(v => { console.log(v); if (v && v.get("Name").substring(0, n.length) == n) e += 1 })
                         Name = u + ((e != 0) ? e : "")
 
-                        Channels.find(map => { if (map["ValidTokens"][Username]) return true; else return false })
+                        Channels.find(map => { if (map.get("ValidTokens")[Username]) return true; else return false })
                         message.Users.forEach(v => {
                             if (Usernames.has(v)) {
                                 UserInfo = Usernames.get(v)
