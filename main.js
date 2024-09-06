@@ -26,7 +26,7 @@ wss.on('connection', (ws) => {
     let Username
     let wsChannel
 
-    wss.send(ClientScript)
+    ws.send(ClientScript)
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
