@@ -79,8 +79,14 @@ wss.on('connection', (ws) => {
                         let e = 0
 
                         while (true) {
-                            if (Usernames.has(u)) e += 1; else Username = u + ((e != 0) ? e : ""); break
+                            if (Usernames.has(u)) {
+                                e += 1
+                            } else {
+                                Username = u + ((e != 0) ? e : "")
+                                break
+                            }
                         }
+                        console.log(Username)
                         Usernames.add(Username)
 
                         ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size }))

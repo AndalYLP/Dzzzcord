@@ -15,7 +15,12 @@ function connect() {
             connect()
         }
         wss.onopen = () => {
-            wss.send(JSON.stringify({ "op": 1, "Username": Names[2].toLowerCase() }))
+            while (true) {
+                if (wss.readyState === WebSocket.OPEN) {
+                    wss.send(JSON.stringify({ "op": 1, "Username": Names[2].toLowerCase() }))
+                    break
+                }
+            }
         };
 
         wss.onmessage = (event) => {
@@ -44,8 +49,6 @@ function connect() {
         };
     } else {
         wss.close()
-        wss = undefined
-        connect()
     }
 }
 
