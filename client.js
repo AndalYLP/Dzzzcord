@@ -1,6 +1,6 @@
 const Names = document.querySelector('[class="sh-navbar__user-thumb"]').alt.split(" ")
 let OriginalTitle = document.title
-
+let NotReadMessages = 0
 let wss
 
 function connect() {
@@ -38,7 +38,7 @@ function connect() {
 
             } else if (Message.op == 2) {
                 d = new Date()
-                if (document.hidden) document.title = "(!) " + OriginalTitle
+                if (document.hidden) { NotReadMessages += 1; document.title = `(${NotReadMessages}) ${OriginalTitle}` }
                 console.log(`\x1b[90m[${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${Message.Message}`)
             } else if (Message.op == 3) {
                 console.log(Message.list)
@@ -70,6 +70,7 @@ function Help() {
 
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
+        NotReadMessages = 0
         document.title = OriginalTitle
     }
 });

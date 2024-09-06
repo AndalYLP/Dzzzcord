@@ -1,3 +1,4 @@
+const { json } = require("express");
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 8080 });
@@ -52,6 +53,12 @@ wss.on('connection', (ws) => {
                         ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size }))
                         MainChannel.add(Username)
                         wsChannel = MainChannel
+
+                        wss.clients.forEach((client) => {
+                            if (client.readyState === WebSocket.OPEN) {
+                                client.send(JSON.stringify({ "op": -2, "Username": Username }));
+                            }
+                        });
                     } else {
                         ws.send('{ "error": "Username index not found" }')
                     }
@@ -79,6 +86,10 @@ wss.on('connection', (ws) => {
                 }, TIMEOUT_INTERVAL);
             } else if (message.op == 3) {
                 ws.send(JSON.stringify({ "op": 3, "list": Array.from(Usernames).join(", ") }))
+            } else if (message.op == 4) {
+
+            } else {
+                ws.send('{ "error": "Invalid op code" }')
             }
         } else {
             ws.send('{ "error": "Invalid message (not a valid json)" }')
