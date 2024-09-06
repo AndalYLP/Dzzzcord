@@ -8,7 +8,7 @@ const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 let Usernames = new Map()
 let MainChannel = new Map()
 
-MainChannel.add([])
+MainChannel.set(1, [])
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
@@ -59,7 +59,7 @@ wss.on('connection', (ws) => {
 
                         MainChannel.set(Username, ws)
                         wsChannel = MainChannel
-                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size - 2, "Messages": wsChannel.values().next().value }))
+                        ws.send(JSON.stringify({ "op": 1, "heartbeat": HEARTBEAT_INTERVAL, "Username": Username, "inMainChannel": MainChannel.size - 2, "Messages": wsChannel.get(1) }))
 
                         wss.clients.forEach((client) => {
                             if (client != ws && client.readyState === WebSocket.OPEN) {
