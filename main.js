@@ -97,6 +97,7 @@ wss.on('connection', (ws) => {
     });
 });
 
+/*
 const cors = require('cors');
 const path = require("path");
 const fs = require('fs');
@@ -125,7 +126,7 @@ app.listen(port, () => {
     console.log(`App listening on port ${port}`)
 })
 
-
+*/
 function HeartbeatHandle(ws) {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send('{ "op": 0 }');
