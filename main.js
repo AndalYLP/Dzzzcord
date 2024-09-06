@@ -7,7 +7,8 @@ const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
 let Usernames = new Set()
-let MainChannel = new Set([])
+let MainChannel = new Set()
+MainChannel.add([])
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
