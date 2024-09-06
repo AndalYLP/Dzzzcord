@@ -45,6 +45,8 @@ function connect() {
             } else if (Message.op == -1) {
                 console.log("Reconnecting...")
                 connect()
+            } else if (Message.op == -2) {
+
             };
         };
     } else {
