@@ -46,7 +46,7 @@ function connect() {
                 console.log("Reconnecting...")
                 connect()
             } else if (Message.op == -2) {
-
+                console.log(`\x1b[33m${Message.Username}\x1b[90m se ha unido.`)
             };
         };
     } else {

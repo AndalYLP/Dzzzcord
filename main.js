@@ -6,13 +6,13 @@ const wss = new WebSocket.Server({ port: 8080 });
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
-let heartbeatTimer
-let timeoutTimer
 let Usernames = new Set()
 let MainChannel = new Set()
 
 wss.on('connection', (ws) => {
     console.log('New client connected');
+    let heartbeatTimer
+    let timeoutTimer
     let Username
     let wsChannel
 
