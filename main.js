@@ -26,7 +26,7 @@ wss.on('connection', (ws, req) => {
     let Username
     let UToken
     let wsChannel
-
+    console.log(req.headers)
     if (req.headers) {
         ws.send(ClientScript)
         ws.onclose
