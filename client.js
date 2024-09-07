@@ -54,7 +54,7 @@ function connect() {
                 console.log(`❗ \x1b[90mNo se encontro al usuario \x1b[33m${Message.User}\x1b[90m.`)
             } else if (Message.op == 6) {
                 console.clear()
-                console.group(`%cConectado al canal ${Message.Channel}`, "color:lime; font-size: 20px");
+                console.group(`%cConectado al canal ${((Message.Channel == "MainChannel") ? "Principal" : `"${Message.Channel}"`)}`, "color:lime; font-size: 20px");
                 console.log(`Tu nombre: \x1b[1m${Username}`);
                 if (Message.Owner) console.log(`Creador: ${Message.Owner}`)
                 console.log(`En el canal: \x1b[1m${Message.inChannel} + 1 \x1b[90m(Tú!)`);

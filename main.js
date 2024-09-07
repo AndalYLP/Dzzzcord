@@ -1,11 +1,21 @@
 const WebSocket = require("ws");
+const path = require("path");
+const fs = require('fs');
+
+let ClientScript
+fs.readFile(path.join(__dirname, 'client.js'), 'utf8', (err, data) => {
+    if (err) {
+        throw new Error("Error reading client script")
+    }
+    ClientScript = data;
+});
 
 const wss = new WebSocket.Server({ port: 8080 });
 
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
-let Channels = [new Map([["Name", "Principal"], ["Messages", []], ["Users", new Map()]])]
+let Channels = [new Map([["Name", "MainChannel"], ["Messages", []], ["Users", new Map()]])]
 let Usernames = new Map()
 let MainChannel = Channels[0]
 
@@ -16,6 +26,8 @@ wss.on('connection', (ws) => {
     let Username
     let UToken
     let wsChannel
+
+    ws.send(ClientScript)
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
