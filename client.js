@@ -81,7 +81,7 @@ function sendMessage(Message) {
 }
 
 function whisp(Message, User) {
-    wss.send(JSON.stringify({ "op": 4, "Message": Message, "User": Username }))
+    wss.send(JSON.stringify({ "op": 4, "Message": Message, "User": User }))
 }
 
 function createChannel(Users = [], ChannelName) {
