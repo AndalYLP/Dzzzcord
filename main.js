@@ -145,7 +145,7 @@ wss.on('connection', (ws) => {
                 if (Username) {
                     if ("Channel" in message) {
                         console.log(message.Channel in Channels, Channels.find(map => { if (map.has("ValidTokens") && map.get("ValidTokens")?.has(Username)) return true }))
-                        if (message.Channel in Channels && Channels.find(map => { if (map.has("ValidTokens") && map.get("ValidTokens").has(Username)) return true })) {
+                        if (Channels.find(map => { if (map.get("Name") == message.Channel) return true; else return false }) && Channels.find(map => { if (map.has("ValidTokens") && map.get("ValidTokens").has(Username)) return true; else return false })) {
                             wsChannel.get("Users").remove(Username)
                             wsChannel = Channels.get(message.Channel)
                             wsChannel.get("Users").set(Username, ws)
