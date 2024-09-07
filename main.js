@@ -146,7 +146,7 @@ wss.on('connection', (ws) => {
                     if ("Channel" in message) {
                         if (Channels.find(map => { if (map.get("Name") == message.Channel) return true; else return false }) && Channels.find(map => { if (!map.has("ValidTokens")) return true; else if (map.get("ValidTokens").get(UToken)) return true; else return false })) {
                             wsChannel.get("Users").delete(Username)
-                            wsChannel = Channels.get(message.Channel)
+                            wsChannel = Channels.find(map => map.get("Name") == message.Channel)
                             wsChannel.get("Users").set(Username, ws)
                             ws.send(JSON.stringify({ "op": 6, "Channel": wsChannel.get("Name"), "Owner": ((wsChannel.has("Owner") ? wsChannel.get("Owner") : false)), "inChannel": wsChannel.get("Users").size - 1 }))
                         } else {
