@@ -49,11 +49,13 @@ wss.on('connection', (ws, req) => {
         wsChannel?.get("Users").delete(Username);
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
-        wss.clients.forEach((client) => {
-            if (client != ws && client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ "op": -2, "Username": Username, "Leaving": true }));
-            }
-        });
+        if (url.parse(req.url, true).query.script) {
+            wss.clients.forEach((client) => {
+                if (client != ws && client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ "op": -2, "Username": Username, "Leaving": true }));
+                }
+            });
+        }
     })
 
     ws.onerror = (error) => {
