@@ -14,6 +14,7 @@ wss.on('connection', (ws) => {
     let heartbeatTimer
     let timeoutTimer
     let Username
+    let UToken
     let wsChannel
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
@@ -53,6 +54,7 @@ wss.on('connection', (ws) => {
                         let e = 0
                         Usernames.forEach((i, v) => { if (v && v.substring(0, u.length) == u) e += 1 })
                         Username = u + ((e != 0) ? e : "")
+                        UToken = message.Token
                         Usernames.set(Username, [message.Token, ws])
                         console.log(Username + " " + message.Token)
 
@@ -118,10 +120,10 @@ wss.on('connection', (ws) => {
             } else if (message.op == 5) {
                 if (Username) {
                     if ("Users" in message && "Name" in message) {
-                        let Tokens = new Map([[Username, ws]])
+                        let Tokens = new Map([[Username, UToken]])
                         n = message.Name
                         let e = 0
-                        Channels.forEach(v => { console.log(v); if (v && v.get("Name").substring(0, n.length) == n) e += 1 })
+                        Channels.forEach(v => { if (v && v.get("Name").substring(0, n.length) == n) e += 1 })
                         Name = n + ((e != 0) ? e : "")
 
                         message.Users.forEach(v => {
@@ -142,11 +144,13 @@ wss.on('connection', (ws) => {
             } else if (message.op == 6) {
                 if (Username) {
                     if ("Channel" in message) {
-                        if (message.Channel in Channels && Channels.find(map => { if (map.has("ValidTokens") && Username in map.has("ValidTokens")) return true; else return false })) {
+                        if (message.Channel in Channels && Channels.find(map => { if (map.has("ValidTokens") && map.get("ValidTokens").has(Username)) return true; else return false })) {
                             wsChannel.get("Users").remove(Username)
                             wsChannel = Channels.get(message.Channel)
                             wsChannel.get("Users").set(Username, ws)
                             ws.send(JSON.stringify({ "op": 6, "Channel": wsChannel.get("Name"), "Owner": ((wsChannel.has("Owner") ? wsChannel.get("Owner") : false)), "inChannel": wsChannel.get("Users").size - 1 }))
+                        } else {
+                            ws.send(JSON.stringify({ "op": 6, "Found": false }))
                         }
                     }
                 } else {
