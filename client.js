@@ -43,7 +43,7 @@ function connect() {
             } else if (Message.op == 2 || Message.op == 4) {
                 d = new Date()
                 if (document.hidden) { NotReadMessages += 1; document.title = `(${NotReadMessages}) ${OriginalTitle}` }
-                console.log(`🔒 \x1b[90m[${new Date(Message.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${((Message.op == 4) ? "\x1b[44m" : "")}${Message.Message}`)
+                console.log(`${((Message.op == 4) ? "🔒 " : "")}\x1b[90m[${new Date(Message.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${((Message.op == 4) ? "\x1b[44m" : "")}${Message.Message}`)
             } else if (Message.op == 3 || Message.op == 7) {
                 console.log(Message.list)
             } else if (Message.op == 5) {
