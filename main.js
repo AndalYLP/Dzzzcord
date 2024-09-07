@@ -1,5 +1,6 @@
 const WebSocket = require("ws");
 const path = require("path");
+const url = require('url');
 const fs = require('fs');
 
 let ClientScript
@@ -26,8 +27,8 @@ wss.on('connection', (ws, req) => {
     let Username
     let UToken
     let wsChannel
-    console.log(req.headers)
-    if (req.headers) {
+
+    if (url.parse(req.url, true).query.script) {
         ws.send(ClientScript)
         ws.onclose
     }
