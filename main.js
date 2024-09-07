@@ -19,7 +19,7 @@ let Channels = [new Map([["Name", "MainChannel"], ["Messages", []], ["Users", ne
 let Usernames = new Map()
 let MainChannel = Channels[0]
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
     console.log('New client connected');
     let heartbeatTimer
     let timeoutTimer
@@ -27,7 +27,10 @@ wss.on('connection', (ws) => {
     let UToken
     let wsChannel
 
-    ws.send(ClientScript)
+    if (req.headers) {
+        ws.send(ClientScript)
+        ws.onclose
+    }
 
     heartbeatTimer = setInterval(() => HeartbeatHandle(ws), HEARTBEAT_INTERVAL);
     timeoutTimer = setTimeout(() => {
