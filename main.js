@@ -135,7 +135,7 @@ wss.on('connection', (ws) => {
                                 ws.send(JSON.stringify({ "op": 52, "User": v }))
                             }
                         });
-                        Channels.push(([["Name", Name], ["ValidTokens", Tokens], ["Owner", Username], ["Messages", []], ["Users", new Map()]]))
+                        Channels.push(new Map([["Name", Name], ["ValidTokens", Tokens], ["Owner", Username], ["Messages", []], ["Users", new Map()]]))
                         ws.send(JSON.stringify({ "op": 5, "Name": Name }))
                     }
                 } else {
