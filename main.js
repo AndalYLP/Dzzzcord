@@ -122,7 +122,7 @@ wss.on('connection', (ws) => {
                         n = message.Name
                         let e = 0
                         Channels.forEach(v => { console.log(v); if (v && v.get("Name").substring(0, n.length) == n) e += 1 })
-                        Name = u + ((e != 0) ? e : "")
+                        Name = n + ((e != 0) ? e : "")
 
                         message.Users.forEach(v => {
                             if (Usernames.has(v)) {

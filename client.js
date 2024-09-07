@@ -47,11 +47,11 @@ function connect() {
             } else if (Message.op == 3) {
                 console.log(Message.list)
             } else if (Message.op == 5) {
-                console.log(`✅ Canal con el nombre \x1b[33m${Message.Name}\x1b[0m creado.`)
+                console.log(`✅ \x1b[90mCanal \x1b[33m${Message.Name}\x1b[90m creado.`)
             } else if (Message.op == 51) {
-                console.log(`➕ Te añadieron al canal \x1b[33m${Message.Name}\x1b[0m!`)
+                console.log(`➕ \x1b[90mTe añadieron al canal \x1b[33m${Message.Name}\x1b[90m!`)
             } else if (Message.op == 52) {
-                console.log(`❗ No se encontro al usuario \x1b[33m${Message.User}\x1b[0m.`)
+                console.log(`❗ \x1b[90mNo se encontro al usuario \x1b[33m${Message.User}\x1b[90m.`)
             } else if (Message.op == 6) {
                 console.clear()
                 console.group(`%cConectado al canal ${Message.Channel}`, "color:lime; font-size: 20px");
