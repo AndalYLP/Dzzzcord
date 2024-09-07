@@ -136,6 +136,7 @@ wss.on('connection', (ws) => {
                             }
                         });
                         Channels.push(new Map([["Name", Name], ["ValidTokens", Tokens], ["Owner", Username], ["Messages", []], ["Users", new Map()]]))
+                        console.log(Channels)
                         ws.send(JSON.stringify({ "op": 5, "Name": Name }))
                     }
                 } else {
@@ -144,7 +145,7 @@ wss.on('connection', (ws) => {
             } else if (message.op == 6) {
                 if (Username) {
                     if ("Channel" in message) {
-                        if (Channels.find(v => v.get("Name") == message.Channel && (!v.has("ValidTokens") || v.get("ValidTokens").has(UToken)))) {
+                        if (Channels.find(v => v.get("Name") == message.Channel && (!v.has("ValidTokens") || v.get("ValidTokens").find(t => t == UToken)))) {
                             wsChannel.get("Users").delete(Username)
                             wsChannel = Channels.find(map => map.get("Name") == message.Channel)
                             wsChannel.get("Users").set(Username, ws)
@@ -158,9 +159,7 @@ wss.on('connection', (ws) => {
                 }
             } else if (message.op == 7) {
                 if (Username) {
-                    ValidChannels = Channels.filter(v => {
-                        return !v.get("ValidTokens") || v.get("ValidTokens").has(UToken);
-                    }).map(map => map.get("Name")).join(", ")
+                    ValidChannels = Channels.filter(v => !v.get("ValidTokens") || v.get("ValidTokens").find(t => t == UToken)).map(map => map.get("Name")).join(", ")
 
                     ws.send(JSON.stringify({ "op": 7, "list": ValidChannels }))
                 } else {
