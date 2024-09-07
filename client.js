@@ -102,12 +102,12 @@ function getOnline() {
 
 function Help() {
     console.group('%cComandos', "color:blue; font-size: 20px");
-    console.log(`\x1b[33msendMessage("Mensaje aqui") \x1b[0m Te sirve para enviar un mensaje ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas usa \\"`);
-    console.log(`\x1b[33mwhisp("Mensaje aqui", "destinatario") \x1b[0m Te sirve para enviar un mensaje que solo una persona lo puede ver ejemplo: whisp("Hola Usuario1!", "Usuario1"), si quieres usar comillas usa \\"`);
+    console.log(`\x1b[33msendMessage("Mensaje aqui") \x1b[0m Envia un mensaje en el canal actual, ejemplo: sendMessage("Hola!"), tiene que ir entre comillas, si quieres usar comillas en tu mensaje usa \\"`);
+    console.log(`\x1b[33mwhisp("Mensaje aqui", "destinatario") \x1b[0m Sirve para enviar un mensaje que solo una persona lo puede ver, ejemplo: whisp("Hola Usuario1!", "Usuario1"), si quieres usar comillas usa \\"`);
     console.log(`\x1b[33mgotoChannel("Nombre del canal")\x1b[0m Ve a un canal en el que estes por ejemplo: gotoChannel("MainChannel")`);
     console.log(`\x1b[33mcreateChannel(["Usuario1","Usuario2"], "Nombre del canal")\x1b[0m Crea un canal ejemplo: createChannel(["Usuario1","Usuario2"], "Los npcs")`);
     console.log(`\x1b[33mgetChannels()\x1b[0m Ve todos los canales que tienes disponibles, no necesitas poner nada dentro de los parentesis`);
-    console.log(`\x1b[33mgetOnline()\x1b[0m Te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
+    console.log(`\x1b[33mgetOnline()\x1b[0m Sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
     console.log('Proximamente más comandos.')
     console.groupEnd();
 }
