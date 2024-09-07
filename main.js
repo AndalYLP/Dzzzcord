@@ -34,7 +34,7 @@ wss.on('connection', (ws) => {
         if (ws.readyState === WebSocket.OPEN) {
             console.log('Cerrando conexión por inactividad')
             ws.close()
-            wsChannel.get("Users").delete(Username)
+            wsChannel?.get("Users").delete(Username)
             Usernames.delete(Username)
         }
     }, TIMEOUT_INTERVAL);
@@ -42,7 +42,7 @@ wss.on('connection', (ws) => {
     ws.on("close", () => {
         console.log('Cliente desconectado');
         Usernames.delete(Username);
-        wsChannel.get("Users").delete(Username);
+        wsChannel?.get("Users").delete(Username);
         clearInterval(heartbeatTimer);
         clearTimeout(timeoutTimer);
         wss.clients.forEach((client) => {
