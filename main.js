@@ -148,7 +148,7 @@ wss.on('connection', (ws) => {
                             wsChannel.get("Users").delete(Username)
                             wsChannel = Channels.find(map => map.get("Name") == message.Channel)
                             wsChannel.get("Users").set(Username, ws)
-                            ws.send(JSON.stringify({ "op": 6, "Channel": wsChannel.get("Name"), "Owner": ((wsChannel.has("Owner") ? wsChannel.get("Owner") : false)), "inChannel": wsChannel.get("Users").size - 1 }))
+                            ws.send(JSON.stringify({ "op": 6, "Channel": wsChannel.get("Name"), "Owner": ((wsChannel.has("Owner") ? wsChannel.get("Owner") : false)), "inChannel": wsChannel.get("Users").size - 1, "Messages": wsChannel.get("Messages") }))
                         } else {
                             ws.send('{ "error": "You cant access this chanel or didnt find it." }')
                         }
