@@ -44,7 +44,7 @@ function connect() {
                 d = new Date()
                 if (document.hidden) { NotReadMessages += 1; document.title = `(${NotReadMessages}) ${OriginalTitle}` }
                 console.log(`🔒 \x1b[90m[${new Date(Message.Time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}] ` + ((Message.Username == Username) ? "\x1b[94m" : "\x1b[92m") + `${Message.Username}\x1b[0m: ${((Message.op == 4) ? "\x1b[44m" : "")}${Message.Message}`)
-            } else if (Message.op == 3) {
+            } else if (Message.op == 3 || Message.op == 7) {
                 console.log(Message.list)
             } else if (Message.op == 5) {
                 console.log(`✅ \x1b[90mCanal \x1b[33m${Message.Name}\x1b[90m creado.`)
@@ -92,6 +92,10 @@ function gotoChannel(channelName) {
     wss.send(JSON.stringify({ "op": 6, "Channel": channelName }))
 }
 
+function getChannels() {
+    wss.send('{"op":7}')
+}
+
 function getOnline() {
     wss.send('{"op": 3}')
 }
@@ -102,6 +106,7 @@ function Help() {
     console.log(`\x1b[33mwhisp("Mensaje aqui", "destinatario") \x1b[0m Te sirve para enviar un mensaje que solo una persona lo puede ver ejemplo: whisp("Hola Usuario1!", "Usuario1"), si quieres usar comillas usa \\"`);
     console.log(`\x1b[33mgotoChannel("Nombre del canal")\x1b[0m Ve a un canal en el que estes por ejemplo: gotoChannel("MainChannel")`);
     console.log(`\x1b[33mcreateChannel(["Usuario1","Usuario2"], "Nombre del canal")\x1b[0m Crea un canal ejemplo: createChannel(["Usuario1","Usuario2"], "Los npcs")`);
+    console.log(`\x1b[33mgetChannels()\x1b[0m Ve todos los canales que tienes disponibles, no necesitas poner nada dentro de los parentesis`);
     console.log(`\x1b[33mgetOnline()\x1b[0m Te sirve para ver quienes estan conectados, no necesitas poner nada dentro de los parentesis`);
     console.log('Proximamente más comandos.')
     console.groupEnd();

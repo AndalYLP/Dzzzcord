@@ -5,7 +5,7 @@ const wss = new WebSocket.Server({ port: 8080 });
 const HEARTBEAT_INTERVAL = 47500
 const TIMEOUT_INTERVAL = HEARTBEAT_INTERVAL + 30000
 
-let Channels = [new Map([["Name", "MainChannel"], ["Messages", []], ["Users", new Map()]])]
+let Channels = [new Map([["Name", "Principal"], ["Messages", []], ["Users", new Map()]])]
 let Usernames = new Map()
 let MainChannel = Channels[0]
 
@@ -144,7 +144,7 @@ wss.on('connection', (ws) => {
             } else if (message.op == 6) {
                 if (Username) {
                     if ("Channel" in message) {
-                        if (Channels.find(map => { if (map.get("Name") == message.Channel) return true; else return false }) && Channels.find(map => { if (!map.has("ValidTokens")) return true; else if (map.get("ValidTokens").get(UToken)) return true; else return false })) {
+                        if (Channels.find(v => v.get("Name") == message.Channel && (!v.has("ValidTokens") || v.get("ValidTokens").has(UToken)))) {
                             wsChannel.get("Users").delete(Username)
                             wsChannel = Channels.find(map => map.get("Name") == message.Channel)
                             wsChannel.get("Users").set(Username, ws)
@@ -153,6 +153,16 @@ wss.on('connection', (ws) => {
                             ws.send('{ "error": "You cant access this chanel or didnt find it." }')
                         }
                     }
+                } else {
+                    ws.send('{ "error": "send op 1 first" }')
+                }
+            } else if (message.op == 7) {
+                if (Username) {
+                    ValidChannels = Channels.filter(v => {
+                        return !v.get("ValidTokens") || v.get("ValidTokens").has(UToken);
+                    }).map(map => map.get("Name")).join(", ")
+
+                    ws.send(JSON.stringify({ "op": 7, "list": ValidChannels }))
                 } else {
                     ws.send('{ "error": "send op 1 first" }')
                 }
